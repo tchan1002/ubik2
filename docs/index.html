@@ -221,14 +221,14 @@
     <script>
         async function loadData() {
             try {
-                const response = await fetch('data.json');
+                const response = await fetch('data.sample.json');
                 const contacts = await response.json();
 
                 displayOverview(contacts);
                 displayContacts(contacts);
             } catch (error) {
                 document.getElementById('contacts').innerHTML =
-                    '<div class="loading">Error loading data. Please make sure data.json is present.</div>';
+                    '<div class="loading">Error loading data. Please make sure data.sample.json is present.</div>';
             }
         }
 
