@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>iMessage Relationship Stats</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+        }
+
+        h1 {
+            font-size: 3em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .subtitle {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .stats-overview {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .stat-value {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 0.9em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .contact-grid {
+            display: grid;
+            gap: 20px;
+        }
+
+        .contact-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .contact-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+        }
+
+        .contact-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .contact-name {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .rank {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+
+        .contact-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .stat-description {
+            font-size: 0.85em;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .progress-bar {
+            background: #f0f0f0;
+            border-radius: 10px;
+            height: 20px;
+            overflow: hidden;
+            margin-top: 5px;
+        }
+
+        .progress-fill {
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            height: 100%;
+            transition: width 0.5s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.75em;
+            font-weight: bold;
+        }
+
+        .streak-badge {
+            display: inline-block;
+            background: #ffd93d;
+            color: #333;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        .loading {
+            text-align: center;
+            color: white;
+            font-size: 1.5em;
+            padding: 50px;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2em;
+            }
+
+            .contact-stats {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>💬 iMessage Relationship Stats</h1>
+            <p class="subtitle">Top 25 Contacts • 1-on-1 Conversations Only</p>
+        </header>
+
+        <div class="stats-overview" id="overview">
+            <div class="stat-card">
+                <div class="stat-value" id="total-messages">-</div>
+                <div class="stat-label">Total Messages</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="total-sessions">-</div>
+                <div class="stat-label">Total Sessions</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="avg-response">-</div>
+                <div class="stat-label">Avg Response Time</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="longest-streak">-</div>
+                <div class="stat-label">Longest Streak</div>
+            </div>
+        </div>
+
+        <div class="contact-grid" id="contacts">
+            <div class="loading">Loading your stats...</div>
+        </div>
+    </div>
+
+    <script>
+        async function loadData() {
+            try {
+                const response = await fetch('data.json');
+                const contacts = await response.json();
+
+                displayOverview(contacts);
+                displayContacts(contacts);
+            } catch (error) {
+                document.getElementById('contacts').innerHTML =
+                    '<div class="loading">Error loading data. Please make sure data.json is present.</div>';
+            }
+        }
+
+        function displayOverview(contacts) {
+            const totalMessages = contacts.reduce((sum, c) => sum + c.total_messages, 0);
+            const totalSessions = contacts.reduce((sum, c) => sum + c.sessions, 0);
+
+            const avgResponseTimes = contacts
+                .filter(c => c.my_median_response_time)
+                .map(c => c.my_median_response_time);
+            const avgResponse = avgResponseTimes.length > 0
+                ? avgResponseTimes.reduce((a, b) => a + b, 0) / avgResponseTimes.length
+                : 0;
+
+            const longestStreak = Math.max(...contacts.map(c => c.longest_streak || 0));
+
+            document.getElementById('total-messages').textContent = totalMessages.toLocaleString();
+            document.getElementById('total-sessions').textContent = totalSessions.toLocaleString();
+            document.getElementById('avg-response').textContent = avgResponse > 0
+                ? `${(avgResponse / 60).toFixed(1)}m`
+                : '-';
+            document.getElementById('longest-streak').textContent = `${longestStreak}d`;
+        }
+
+        function displayContacts(contacts) {
+            const container = document.getElementById('contacts');
+            container.innerHTML = '';
+
+            contacts.forEach(contact => {
+                const card = document.createElement('div');
+                card.className = 'contact-card';
+
+                const messageRatio = contact.message_ratio ? (contact.message_ratio * 100).toFixed(1) : 0;
+                const initiatorRatio = contact.initiator_ratio ? (contact.initiator_ratio * 100).toFixed(1) : 0;
+                const myResponseTime = contact.my_median_response_time
+                    ? (contact.my_median_response_time / 60).toFixed(1)
+                    : '-';
+                const theirResponseTime = contact.their_median_response_time
+                    ? (contact.their_median_response_time / 60).toFixed(1)
+                    : '-';
+
+                card.innerHTML = `
+                    <div class="contact-header">
+                        <div class="contact-name">${contact.name}</div>
+                        <div class="rank">${contact.rank}</div>
+                    </div>
+                    <div class="contact-stats">
+                        <div class="stat">
+                            <div class="stat-number">${contact.total_messages.toLocaleString()}</div>
+                            <div class="stat-description">Messages</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-number">${contact.sessions}</div>
+                            <div class="stat-description">Sessions</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-number">${myResponseTime}m</div>
+                            <div class="stat-description">Your Response</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-number">${theirResponseTime}m</div>
+                            <div class="stat-description">Their Response</div>
+                        </div>
+                    </div>
+                    <div style="margin-top: 20px;">
+                        <div style="font-size: 0.85em; color: #666; margin-bottom: 5px;">
+                            You send ${messageRatio}% of messages
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: ${messageRatio}%">
+                                ${messageRatio}%
+                            </div>
+                        </div>
+                    </div>
+                    <div style="margin-top: 15px;">
+                        <div style="font-size: 0.85em; color: #666; margin-bottom: 5px;">
+                            They start ${initiatorRatio}% of conversations
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: ${initiatorRatio}%">
+                                ${initiatorRatio}%
+                            </div>
+                        </div>
+                    </div>
+                    <div style="text-align: center;">
+                        <span class="streak-badge">
+                            🔥 ${contact.current_streak}d streak (best: ${contact.longest_streak}d)
+                        </span>
+                    </div>
+                `;
+
+                container.appendChild(card);
+            });
+        }
+
+        // Load data when page loads
+        loadData();
+    </script>
+</body>
+</html>

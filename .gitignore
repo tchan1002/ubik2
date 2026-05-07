@@ -1,0 +1,101 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+ENV/
+*.egg-info/
+dist/
+build/
+
+# iMessage database (NEVER COMMIT!)
+*.db
+*.db-shm
+*.db-wal
+chat.db*
+
+# Personal contact data (SENSITIVE!)
+.imessage-parser/
+~/.imessage-parser/
+*.vcf
+Bella*.vcf
+*contacts*.vcf
+*contact*.json
+contact_names.json
+contact_map.json
+
+# Test and debug scripts (contain phone numbers/identifiers)
+test_*.py
+debug_*.py
+analyze_specific.py
+parse_vcard.py
+check_*.py
+inspect_*.py
+*_test.py
+*_debug.py
+
+# Any recovery or temp analysis folders
+*_recovery/
+aitana_*/
+ryan_*/
+sophia_*/
+
+# Generated data with personal info (IMPORTANT!)
+docs/data.json
+
+# Any output or export files
+output/
+exports/
+*.csv
+*.xlsx
+
+# Backup files that might contain data
+*.bak
+*.backup
+*~
+
+# Jupyter notebooks (if you create any with real data)
+*.ipynb
+.ipynb_checkpoints/
+
+# Environment variables (might contain API keys or paths)
+.env
+.env.local
+*.env
+
+# IDE & Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*.sublime-project
+*.sublime-workspace
+
+# OS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+Desktop.ini
+
+# Logs that might contain identifiers
+*.log
+logs/
+
+# Screenshots (might show personal data)
+*.png
+*.jpg
+*.jpeg
+*.gif
+screenshots/
+
+# Temporary files
+tmp/
+temp/
+*.tmp

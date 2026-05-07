@@ -1,0 +1,55 @@
+{
+  "spam_threshold": 0.7,
+  "whitelist": [],
+  "blacklist": [],
+  "session_gap_seconds": 14400,
+  "dormancy_threshold_days": 730,
+  "db_path": "~/Library/Messages/chat.db",
+  "spam_weights": {
+    "zero_reply_ever": 0.6,
+    "zero_reply_streak": 0.4,
+    "high_velocity": 0.3,
+    "length_uniformity": 0.3,
+    "keyword_match": 0.4,
+    "alphanumeric_sender": 0.5
+  },
+  "spam_patterns": [
+    "\\b\\d{4,8}\\b.*\\b(code|pin|otp|verify|verification)\\b",
+    "\\btrack(ing)?\\b.*\\border\\b",
+    "\\bdelivered\\b|\\bout for delivery\\b|\\barriving\\b",
+    "\\byour (order|package|shipment)\\b",
+    "\\breply stop to (opt.?out|unsubscribe)\\b",
+    "\\b(promo|offer|deal|discount|% off|save \\$)\\b",
+    "\\bappointment (reminder|confirmed|scheduled)\\b",
+    "\\bstatement (ready|available)\\b|\\bpayment due\\b"
+  ],
+  "transient_thresholds": {
+    "max_messages": 10,
+    "max_time_span_days": 3,
+    "max_sessions": 2
+  },
+  "tapback_only_thresholds": {
+    "min_tapback_percentage": 0.8,
+    "max_real_messages": 5
+  },
+  "automated_regular_thresholds": {
+    "max_send_time_std": 1.5,
+    "max_length_std": 4.0,
+    "min_messages_for_pattern": 20,
+    "max_initiated_ratio": 0.05
+  },
+  "time_windows": {
+    "morning": [6, 12],
+    "afternoon": [12, 18],
+    "evening": [18, 23],
+    "late_night": [23, 6]
+  },
+  "importance_weights": {
+    "recency": 0.25,
+    "volume": 0.20,
+    "depth": 0.15,
+    "reciprocity": 0.15,
+    "response_urgency": 0.15,
+    "initiator_balance": 0.10
+  }
+}
